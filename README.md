@@ -9,10 +9,11 @@ Here is an example of the output:
 ### Installation
 
 erd-dotnet requires:
-* [GraphViz](http://www.graphviz.org/download/), and one of:
+* [GraphViz](http://www.graphviz.org/download/)
 * [.Net 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
 
 All of these are available for Windows, Mac and Linux.
+Dot must be in your path.
 
 ### Usage
 
@@ -32,3 +33,23 @@ weight
 birth
 +location_id
 ```
+
+### Build instruction
+
+You need .net 5 SDK.
+
+Build:
+```
+dotnet build
+```
+Run:
+```
+dotnet run
+```
+
+
+### Credit
+
+This work is based on the work of:
+ * [https://github.com/BurntSushi/erd](https://github.com/BurntSushi/erd)
+ * [https://github.com/kaishuu0123/erd-go](https://github.com/kaishuu0123/erd-go)
