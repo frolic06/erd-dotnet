@@ -4,7 +4,7 @@ This utility translates a plain text description of a relational database schema
 
 Here is an example of the output:
 
-![Simple erd example](https://github.com/frolic06/erd-dotnet/raw/main/examples/simple.png)
+![Simple erd example](https://github.com/frolic06/erd-dotnet/blob/main/examples/simple.png)
 
 ### Installation
 
