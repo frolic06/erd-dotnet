@@ -9,7 +9,7 @@ namespace erd_dotnet
         {
             if (args.Length != 2)
             {
-                Console.WriteLine("Usage: erd-csharp [path-to-input-file] [path-to-output-file]");
+                Console.WriteLine("Usage: erd-dotnet [path-to-input-file] [path-to-output-file]");
                 Console.WriteLine("Where:");
                 Console.WriteLine("  - [path-to-input-file]     Text file (er format)");
                 Console.WriteLine("  - [path-to-output-file]    Output file (.png)");
