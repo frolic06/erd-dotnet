@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO;
 
 namespace erd_dotnet
 {
@@ -36,7 +38,7 @@ namespace erd_dotnet
                     }
                     else if (entity != null)
                     {
-                        entity.Fields.Add(new Attribute(l));
+                        entity.Fields.Add(new Attribute(RemoveQuotes(l)));
                     }
 
                 }
@@ -45,6 +47,11 @@ namespace erd_dotnet
             AddCurrentEntity();
 
             return erd;
+        }
+
+        private static string RemoveQuotes(string text)
+        {
+            return text.Replace("'", "\"").Replace("`", "\"");
         }
 
         private static bool IsComment(string line)
@@ -69,7 +76,7 @@ namespace erd_dotnet
 
         private static Entity ParseEntity(string line)
         {
-            return new Entity() { Title = line.Substring(1, line.Length - 2) };
+            return new Entity() { Title = RemoveQuotes(line.Substring(1, line.Length - 2)) };
         }
 
         private static Relationship ParseRelationship(string line)
@@ -83,9 +90,9 @@ namespace erd_dotnet
             var part2 = SplitWhitespace(parts[1]);
 
             var relationship = new Relationship();
-            relationship.Name1 = part1.first;
+            relationship.Name1 = "\"" +  part1.first + "\"";
             relationship.Label1 = GetRelationshipLabel(part1.last);
-            relationship.Name2 = part2.last;
+            relationship.Name2 = "\"" + part2.last + "\"";
             relationship.Label2 = GetRelationshipLabel(part2.first);
 
             return relationship;
@@ -104,8 +111,29 @@ namespace erd_dotnet
         }
         private static (string first, string last) SplitWhitespace(string text)
         {
-            var substrings = Regex.Split(text, @"\s+");
-            return (substrings[0], substrings[1]);
+            string first = string.Empty;
+            string last = string.Empty;
+            using (var parser = new TextFieldParser(new StringReader(RemoveQuotes(text))))
+            {
+                parser.HasFieldsEnclosedInQuotes = true;
+                parser.Delimiters = new[] { " " };
+                while (!parser.EndOfData)
+                {
+                    var fields = parser.ReadFields();
+                    foreach (var field in fields)
+                    {
+                        if (string.IsNullOrEmpty(first))
+                        {
+                            first = field;
+                        }
+                        else
+                        {
+                            last = field;
+                        }
+                    }
+                }
+            }
+            return (first, last);
         }
 
         private void AddCurrentEntity()
