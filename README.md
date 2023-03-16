@@ -17,11 +17,21 @@ Dot must be in your path.
 
 ### Usage
 
-erd-dotnet <path-to-input-file> <path-to-output-file>
-  
+```bash
+erd-dotnet INPUTFILE OUTPUTFILE [OPTION]
+```
+
 Where:
- * <path-to-input-file> is the path of a text file (.er format)
- * <path-to-output-file> is the path of the output file (.png)
+ * *INPUTFILE* is the path of a text file (.er format)
+ * *OUTPUTFILE* is the path of the output file (.png or .txt)
+
+Options:
+  -f, --format TXT  The output is a text file (dot format)
+
+By default, the output will be a png file. This requires Dot to be installed.
+
+Alternatively you can use the text option and use an online tool:
+Copy and paste the contents of the .dot file into an [online graphviz viewer](https://edotor.net)
 
 ### Quick example of a .er file
 

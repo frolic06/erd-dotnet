@@ -1,18 +1,41 @@
-﻿using erd_dotnet;
+﻿using System.CommandLine;
+using erd_dotnet;
 
-if (args.Length != 2)
+var inputArgument = new Argument<string>
+    ("inputFile", "Text file (er format).");
+var outputArgument = new Argument<string>
+    ("outputFile", "Output file (png or txt).");
+var optionOutputFormat = new Option<string>(name: "--format", description: "Output format (png or txt)", getDefaultValue: () => "png");
+optionOutputFormat.AddAlias("-f");
+var rootCommand = new RootCommand("Dotnet Erd to png");
+rootCommand.Add(inputArgument);
+rootCommand.Add(outputArgument);
+rootCommand.AddGlobalOption(optionOutputFormat);
+
+rootCommand.SetHandler((optionFormatValue, inputArgumentValue, outputArgumentValue) =>
 {
-    Console.WriteLine("Usage: erd-dotnet [path-to-input-file] [path-to-output-file]");
-    Console.WriteLine("Where:");
-    Console.WriteLine("  - [path-to-input-file]     Text file (er format)");
-    Console.WriteLine("  - [path-to-output-file]    Output file (.png)");
-    return;
-}
-var text = File.ReadAllLines(args[0]);
-var parser = new ErdParser();
-var erd = parser.Parse(text);
+    GenerateFile(inputArgumentValue, outputArgumentValue, optionFormatValue);
+}, optionOutputFormat, inputArgument, outputArgument);
 
-var writer = new ErdDotWriter(erd);
-var tempDot = Path.GetTempFileName();
-writer.WriteFile(tempDot);
-System.Diagnostics.Process.Start("dot", $"-Tpng {tempDot} -o {args[1]}");
+await rootCommand.InvokeAsync(args);
+
+
+void GenerateFile(string input, string output, string format)
+{
+    var text = File.ReadAllLines(input);
+    var parser = new ErdParser();
+    var erd = parser.Parse(text);
+
+    var writer = new ErdDotWriter(erd);
+
+    if (format == "png")
+    {
+        var tempDot = Path.GetTempFileName();
+        writer.WriteFile(tempDot);
+        System.Diagnostics.Process.Start("dot", $"-Tpng {tempDot} -o {output}");
+    }
+    else 
+    {
+        writer.WriteFile(output);
+    }
+}
