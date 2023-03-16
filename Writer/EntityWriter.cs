@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace erd_dotnet;
 
 class EntityWriter
@@ -26,6 +28,11 @@ class EntityWriter
         foreach (var field in entity.Fields)
         {
             string key = field.IsPK ? "🔑" : "";
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            if (isWindows && field.IsPK)
+            {
+                key = @"<FONT FACE=""Segoe UI Emoji"">🔑</FONT>";
+            }
             string prefix = field.IsFK ? "<I>" : "";
             if (field.IsPK) { prefix += "<U>"; }
             string suffix = field.IsPK ? "</U>" : "";
