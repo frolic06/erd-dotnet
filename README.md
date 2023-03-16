@@ -10,7 +10,7 @@ Here is an example of the output:
 
 erd-dotnet requires:
 * [GraphViz](http://www.graphviz.org/download/)
-* [.Net 5 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
+* [.Net 7 Runtime](https://dotnet.microsoft.com/download/dotnet/7.0)
 
 All of these are available for Windows, Mac and Linux.
 Dot must be in your path.
@@ -36,7 +36,7 @@ birth
 
 ### Build instruction
 
-You need .net 5 SDK.
+You need .net 7 SDK.
 
 Build:
 ```

@@ -1,10 +1,10 @@
 namespace erd_dotnet
 {
-    class Relationship
+    record Relationship
     {
-        public string Name1 { get; set; }
-        public string Label1 { get; set; }
-        public string Name2 { get; set; }
-        public string Label2 { get; set; }
+        public string Name1 { get; init; } = string.Empty;
+        public string Label1 { get; init; } = string.Empty;
+        public string Name2 { get; init; } = string.Empty;
+        public string Label2 { get; init; } = string.Empty;
     }
 }

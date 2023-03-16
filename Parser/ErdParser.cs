@@ -9,7 +9,7 @@ namespace erd_dotnet
     class ErdParser
     {
         private Erd erd;
-        private Entity entity;
+        private Entity? entity;
 
         public ErdParser()
         {
@@ -89,13 +89,13 @@ namespace erd_dotnet
             var part1 = SplitWhitespace(parts[0]);
             var part2 = SplitWhitespace(parts[1]);
 
-            var relationship = new Relationship();
-            relationship.Name1 = "\"" +  part1.first + "\"";
-            relationship.Label1 = GetRelationshipLabel(part1.last);
-            relationship.Name2 = "\"" + part2.last + "\"";
-            relationship.Label2 = GetRelationshipLabel(part2.first);
-
-            return relationship;
+            return new Relationship()
+            {
+                Name1 = "\"" + part1.first + "\"",
+                Label1 = GetRelationshipLabel(part1.last),
+                Name2 = "\"" + part2.last + "\"",
+                Label2 = GetRelationshipLabel(part2.first),
+            };
         }
 
         private static string GetRelationshipLabel(string text)
@@ -120,15 +120,18 @@ namespace erd_dotnet
                 while (!parser.EndOfData)
                 {
                     var fields = parser.ReadFields();
-                    foreach (var field in fields)
+                    if (fields is not null)
                     {
-                        if (string.IsNullOrEmpty(first))
+                        foreach (var field in fields)
                         {
-                            first = field;
-                        }
-                        else
-                        {
-                            last = field;
+                            if (string.IsNullOrEmpty(first))
+                            {
+                                first = field;
+                            }
+                            else
+                            {
+                                last = field;
+                            }
                         }
                     }
                 }
