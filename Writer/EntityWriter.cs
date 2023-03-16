@@ -25,7 +25,7 @@ class EntityWriter
         "); // WIDTH=""134""
         foreach (var field in entity.Fields)
         {
-            string key = field.IsPK ? "<IMG SRC=\"key.png\"/>" : "";
+            string key = field.IsPK ? "🔑" : "";
             string prefix = field.IsFK ? "<I>" : "";
             if (field.IsPK) { prefix += "<U>"; }
             string suffix = field.IsPK ? "</U>" : "";
