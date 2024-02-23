@@ -6,8 +6,9 @@ class EntityWriter
 {
     public static List<string> BuildString(Entity entity, WriterOption option)
     {
-        var res = new List<string>();
-        res.Add($@"
+        var res = new List<string>
+        {
+            $@"
             {entity.Title} [label=<
         <TABLE 
             BORDER=""0"" 
@@ -24,11 +25,12 @@ class EntityWriter
                 CELLPADDING=""0""
                 CELLSPACING=""4""
                 >
-        "); // WIDTH=""134""
+        " // WIDTH=""134""
+        };
+        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         foreach (var field in entity.Fields)
         {
             string key = field.IsPK ? "🔑" : "";
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             if (isWindows && field.IsPK)
             {
                 key = @"<FONT FACE=""Segoe UI Emoji"">🔑</FONT>";
