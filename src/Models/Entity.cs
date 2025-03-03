@@ -1,6 +1,6 @@
 namespace erd_dotnet;
 
-class Entity
+public class Entity
 {
     public string Title { get; set; }
     public List<Attribute> Fields { get; set; }
@@ -15,9 +15,23 @@ class Entity
         Title = title;
         Fields = fields;
     }
+    public void AddOrUpdateAttribute(Attribute attribute)
+    {
+        var field = Fields.FirstOrDefault(f => f.Name == attribute.Name);
+        if (field == null)
+        {
+            Fields.Add(attribute);
+        }
+        else
+        {
+            field.Label = attribute.Label;
+            field.IsPK = attribute.IsPK;
+            field.IsFK = attribute.IsFK;
+        }
+    }
 }
 
-class Attribute
+public class Attribute
 {
     public string Name { get; set; }
     public string Label { get; set; }
@@ -48,5 +62,13 @@ class Attribute
                 Name = name.Substring(1);
             }
         }
+    }
+
+    public Attribute(string name, bool isPK, bool isFK)
+    {
+        Name = name;
+        Label = "";
+        IsPK = isPK;
+        IsFK = isFK;
     }
 }

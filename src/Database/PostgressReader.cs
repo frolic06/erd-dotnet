@@ -2,8 +2,6 @@ using Npgsql;
 using Dapper;
 namespace erd_dotnet;
 
-public record AssociatedTable(string table1, string table2);
-
 public class PostgresReader
 {
     private readonly string _connectionString;
@@ -13,7 +11,7 @@ public class PostgresReader
         _connectionString = connectionString;
     }
 
-    public async Task<List<string>> GetErdData()
+    public async Task<Erd> FetchErdEntities(Erd erd)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -22,17 +20,9 @@ public class PostgresReader
             "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' and table_type = 'BASE TABLE';"
         );
 
-        var erdFile = new List<string>
-        {
-            "header {size: \"20\", color: \"#3366ff\"}",
-            "entity {bgcolor: \"#ececfc\", size: \"20\"}",
-            ""
-        };
-
-        var associatedTables = new List<AssociatedTable>();
         foreach (var tableName in tables)
         {
-            erdFile.Add($"[{tableName}]");
+            var entity = erd.AddOrUpdateEntity(tableName);
 
             var columns = await connection.QueryAsync<string>(
                 $"SELECT column_name FROM information_schema.columns WHERE table_name = @tableName;", new { tableName }
@@ -41,22 +31,20 @@ public class PostgresReader
             var foreignKeys = await GetForeignKeys(connection, tableName);
             foreach (var column in columns)
             {
-                var prefix = "";
-                if (primaryKeys.Contains(column))
-                {
-                    prefix += "*";
-                }
-                if (foreignKeys.Any(fk => fk.ColumnName == column))
-                {
-                    prefix += "+";
-                }
-                erdFile.Add($"{prefix}{column}");
+                var attribute = new Attribute(column);
+                attribute.IsPK = primaryKeys.Contains(column);
+                attribute.IsFK = foreignKeys.Any(fk => fk.ColumnName == column);
+                entity.AddOrUpdateAttribute(attribute);
             }
-            erdFile.Add("");
-            associatedTables.AddRange(foreignKeys.Select(fk => new AssociatedTable(tableName, fk.ForeignTableName!)));
+            foreach (var (_, foreignTableName, _) in foreignKeys)
+            {
+                erd.AddMissingRelationships(new Relationship() { Name1 = tableName, Label1 = "*", Name2 = foreignTableName, Label2 = "*" });
+            }
+            var removed = entity.Fields.RemoveAll(f => !columns.Contains(f.Name));
         }
-        erdFile.AddRange(associatedTables.Select(t => $"{t.table1} 1--* {t.table2}"));
-        return erdFile;
+        var removedTbl = erd.Entities.RemoveAll(e => !tables.Contains(e.Title));
+        erd.Relationships.RemoveAll(r => !tables.Contains(r.Name1) || !tables.Contains(r.Name2));
+        return erd;
     }
 
     private static async Task<IEnumerable<string>> GetPrimaryKeys(NpgsqlConnection connection, string tableName)

@@ -1,0 +1,10 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "dotnet.defaultSolution": "erd-dotnet.sln"
+    }
+}

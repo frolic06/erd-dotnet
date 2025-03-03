@@ -2,8 +2,8 @@
 using erd_dotnet;
 
 var inputArgument = new Argument<string>("erdFile", "Erd text file (er format).");
-var outputArgument = new Argument<string>("outputFile", "Output file (png or txt).");
-var optionOutputFormat = new Option<string>(name: "--format", description: "Output format (png or txt)", getDefaultValue: () => "png");
+var outputArgument = new Argument<string>("outputFile", "Output file (png or dot).");
+var optionOutputFormat = new Option<string>(name: "--format", description: "Output format (png or dot)", getDefaultValue: () => "png");
 optionOutputFormat.AddAlias("-f");
 var optionReadDatabase = new Option<string>(name: "--database", description: "Database connection string (Postgres)");
 optionReadDatabase.AddAlias("-d");
@@ -33,26 +33,39 @@ static async Task Execute(string input, string output, string format, string dat
 
 static async Task GenerateErdFromDatabase(string connectionString, string erdFile)
 {
+    Erd erd = new Erd();
+    if (File.Exists(erdFile))
+    {
+        var parser = new ErdParser();
+        erd = parser.ParseFromFile(erdFile);
+    }
     var reader = new PostgresReader(connectionString);
-    var tables = await reader.GetErdData();
-    File.WriteAllLines(erdFile, tables);
+    erd = await reader.FetchErdEntities(erd);
+    var erdWriter = new ErdWriter(erd);
+
+    File.WriteAllLines(erdFile, erdWriter.GetStrings());
 }
 
 static void GenerateFile(string input, string output, string format)
 {
-    var text = File.ReadAllLines(input);
+    if (!File.Exists(input))
+    {
+        Console.WriteLine($"File {input} not found.");
+        return;
+    }
+
     var parser = new ErdParser();
-    var erd = parser.Parse(text);
+    var erd = parser.ParseFromFile(input);
 
     var writer = new ErdDotWriter(erd);
 
-    if (format == "png")
+    if (format.ToLowerInvariant() == "png")
     {
         var tempDot = Path.GetTempFileName();
         writer.WriteFile(tempDot);
         System.Diagnostics.Process.Start("dot", $"-Tpng {tempDot} -o {output}");
     }
-    else 
+    else
     {
         writer.WriteFile(output);
     }

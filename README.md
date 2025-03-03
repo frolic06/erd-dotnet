@@ -29,20 +29,23 @@ Where:
  * *OUTPUT_FILE* is the path of the output file (.png or .txt)
 
 Options:
- * -f, --format TXT  The output is a text file (dot format)
- * -d, --database DB_CONNECTION Obtaining the schema from a database (Postgress only)
- DB_CONNECTION is like: "Host=192.168.XXX.XXX:5432;Username=user;Password=pwd;Database=my_database;", see [Npgsql doc](https://www.npgsql.org/doc/connection-string-parameters.html)
+| Short | Long           | Description
+|-------|----------------|----------------------------------------
+| -f FMT|  --format FMT  | Select the output format to one of: dot, png (default)
+| -d DB |  --database DB | Obtains the schema from a database (Postgres only)
+
+`DB` is a database connection string like: `Host=192.168.XXX.XXX:5432;Username=user;Password=pwd;Database=my_database;`, see [Npgsql doc](https://www.npgsql.org/doc/connection-string-parameters.html)
 
 
 🚨 By default, the output will be a png file. This requires *Dot* to be installed.
 
-🌐 Alternatively you can use the text option and use an online tool:
+🌐 Alternatively you can use the dot option and use an online tool:
 Copy and paste the contents of the .dot file into an [online graphviz viewer](https://edotor.net)
 
-### The .er file format
+### The `er` file format
 
-This is a text file that can easily be updated.
-The name of the table is enclosed in [ ], followed by the names of the columns in the following rows. A primary key is preceded by *, a foreign key by +.
+The `er` format is a text file that can easily be updated.
+The name of the table is enclosed in `[` `]`, followed by the names of the columns in the following rows. A primary key is preceded by `*`, a foreign key by `+`. Note that a column may be *both* a primary key and a foreign key.
 
 The relationships between the tables are expressed as follows:
 ```

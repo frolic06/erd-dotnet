@@ -19,7 +19,7 @@ class ErdDotWriter
         Relationships();
         Entities();
         Tail();
-        System.IO.File.WriteAllLines(path, textLines);
+        File.WriteAllLines(path, textLines);
     }
 
     private void Header()

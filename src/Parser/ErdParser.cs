@@ -2,7 +2,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace erd_dotnet;
 
-class ErdParser
+public class ErdParser
 {
     private Erd erd;
     private Entity? entity;
@@ -13,7 +13,12 @@ class ErdParser
         entity = null;
     }
 
-    public Erd Parse(IEnumerable<string> text)
+    public Erd ParseFromFile(string file)
+    {
+        return ParseFromText(File.ReadAllLines(file));
+    }
+
+    public Erd ParseFromText(IEnumerable<string> text)
     {
 
         entity = null;
@@ -87,24 +92,13 @@ class ErdParser
 
         return new Relationship()
         {
-            Name1 = "\"" + part1.first + "\"",
-            Label1 = GetRelationshipLabel(part1.last),
-            Name2 = "\"" + part2.last + "\"",
-            Label2 = GetRelationshipLabel(part2.first),
+            Name1 = part1.first,
+            Label1 = part1.last,
+            Name2 = part2.last,
+            Label2 = part2.first,
         };
     }
 
-    private static string GetRelationshipLabel(string text)
-    {
-        return text switch
-        {
-            "?" => "{0,1}",
-            "1" => "1",
-            "*" => "0..N",
-            "+" => "1..N",
-            _ => ""
-        };
-    }
     private static (string first, string last) SplitWhitespace(string text)
     {
         string first = string.Empty;
@@ -112,7 +106,7 @@ class ErdParser
         using (var parser = new TextFieldParser(new StringReader(RemoveQuotes(text))))
         {
             parser.HasFieldsEnclosedInQuotes = true;
-            parser.Delimiters = new[] { " " };
+            parser.Delimiters = [" "];
             while (!parser.EndOfData)
             {
                 var fields = parser.ReadFields();
