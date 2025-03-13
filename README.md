@@ -16,7 +16,12 @@ erd-dotnet requires:
 * [.Net 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 All of these are available for Windows, Mac and Linux.
-Dot must be in your path.
+*Dot* must be in your path.
+
+For linux, you should also install the font "Noto Color Emoji". For example (Debian / Ubuntu):
+```bash
+sudo apt install fonts-noto-color-emoji
+```
 
 ### Usage
 

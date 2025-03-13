@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Diagnostics;
 using erd_dotnet;
 
 var inputArgument = new Argument<string>("erdFile", "Erd text file (er format).");
@@ -62,8 +63,34 @@ static void GenerateFile(string input, string output, string format)
     if (format.ToLowerInvariant() == "png")
     {
         var tempDot = Path.GetTempFileName();
+        var tempPng = tempDot + ".png";
         writer.WriteFile(tempDot);
-        System.Diagnostics.Process.Start("dot", $"-Tpng {tempDot} -o {output}");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "dot",
+            Arguments = $"-Tpng {tempDot} -o {tempPng}",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        using (Process process = new Process())
+        {
+            process.StartInfo = startInfo;
+
+            process.Start();
+
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                Console.WriteLine(process.StandardError.ReadToEnd());
+                return;
+            }
+            File.Move(tempPng, output, true);
+            File.Delete(tempDot);
+        }
     }
     else
     {

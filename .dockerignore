@@ -1,0 +1,24 @@
+# Ignore IDE configuration files
+.vscode/
+*.code-workspace
+
+# Ignore build directories
+bin/
+obj/
+
+# Ignore log files
+*.log
+
+# Ignore test files
+test/
+
+# Ignore user configuration files
+*.user
+*.rsuser
+*.suo
+
+# Ignore backup files
+*.bak
+*.swp
+
+**/node_modules/

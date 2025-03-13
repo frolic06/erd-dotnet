@@ -25,15 +25,20 @@ class EntityWriter
                 CELLPADDING=""0""
                 CELLSPACING=""4""
                 >
-        " // WIDTH=""134""
+        "
         };
         bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         foreach (var field in entity.Fields)
         {
             string key = field.IsPK ? "🔑" : "";
             if (isWindows && field.IsPK)
             {
                 key = @"<FONT FACE=""Segoe UI Emoji"">🔑</FONT>";
+            }
+            if (isLinux && field.IsPK)
+            {
+                key = @"<FONT FACE=""Noto Color Emoji"">🔑</FONT>";
             }
             string prefix = field.IsFK ? "<I>" : "";
             if (field.IsPK) { prefix += "<U>"; }
