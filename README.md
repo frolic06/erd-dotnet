@@ -88,6 +88,19 @@ Run:
 dotnet run
 ```
 
+### Docker usage
+
+#### Example
+
+```bash
+docker run --rm -it -v $(pwd):/data mochsenbein/erd /data/simple.er /data/simple.png
+```
+
+#### Local Docker build and run
+
+```
+docker build -t erd . &&  docker run --rm -it erd
+```
 
 ### Credit
 
