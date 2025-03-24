@@ -11,8 +11,8 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS runtime
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y graphviz
-RUN apt-get install fonts-noto-color-emoji
+RUN apt-get update && apt-get install -y --no-install-recommends graphviz fonts-noto-color-emoji && \
+rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/src/out ./
 ENTRYPOINT ["dotnet", "erd-dotnet.dll"]
